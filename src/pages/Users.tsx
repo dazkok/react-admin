@@ -2,9 +2,18 @@ import React, {useEffect, useState} from 'react';
 import Layout from "../components/Layout";
 import axios from "axios";
 import {User} from "../models/user";
+import Table from '@mui/material/Table';
+import TableHead from '@mui/material/TableHead';
+import TableBody from '@mui/material/TableBody';
+import TableRow from '@mui/material/TableRow';
+import TableCell from '@mui/material/TableCell';
+import {TableFooter, TablePagination} from "@mui/material";
+import Button from '@mui/material/Button';
 
 const Users = () => {
     const [users, setUsers] = useState<User[]>([]);
+    const [page, setPage] = useState(0);
+    const perPage = 10;
 
     useEffect(() => {
         (
@@ -19,28 +28,39 @@ const Users = () => {
 
     return (
         <Layout>
-            <table className="table table-striped table-sm">
-                <thead>
-                <tr>
-                    <th scope="col">#</th>
-                    <th scope="col">Name</th>
-                    <th scope="col">Email</th>
-                    <th scope="col">Actions</th>
-                </tr>
-                </thead>
-                <tbody>
-                {users.map(user => {
-                    return (
-                        <tr>
-                            <td>{user.id}</td>
-                            <td>{user.first_name} {user.last_name}</td>
-                            <td>{user.email}</td>
-                            <td>placeholder</td>
-                        </tr>
-                    )
-                })}
-                </tbody>
-            </table>
+            <Table>
+                <TableHead>
+                    <TableRow>
+                        <TableCell>#</TableCell>
+                        <TableCell>Name</TableCell>
+                        <TableCell>Email</TableCell>
+                        <TableCell>Actions</TableCell>
+                    </TableRow>
+                </TableHead>
+                <TableBody>
+                    {users.slice(page * perPage, (page + 1) * perPage).map(user => {
+                        return (
+                            <TableRow key={'user.id'}>
+                                <TableCell>{user.id}</TableCell>
+                                <TableCell>{user.first_name} {user.last_name}</TableCell>
+                                <TableCell>{user.email}</TableCell>
+                                <TableCell>
+                                    <Button variant="contained" color={"primary"}
+                                            href={`users/${user.id}/links`}
+                                    >View</Button>
+                                </TableCell>
+                            </TableRow>
+                        )
+                    })}
+                </TableBody>
+                <TableFooter>
+                    <TablePagination count={users.length}
+                                     page={page}
+                                     rowsPerPage={perPage}
+                                     rowsPerPageOptions={[]}
+                                     onPageChange={(e, newPage) => setPage(newPage)}/>
+                </TableFooter>
+            </Table>
         </Layout>
     );
 };
